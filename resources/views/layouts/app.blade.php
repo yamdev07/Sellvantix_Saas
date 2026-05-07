@@ -248,8 +248,48 @@
     </style>
     
     @yield('styles')
+<style>
+    #page-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 16px;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    #page-loader.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+    .loader-spinner {
+        width: 44px;
+        height: 44px;
+        border: 3px solid #f1f5f9;
+        border-top-color: #f97316;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+    }
+    .loader-logo {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.5px;
+    }
+    .loader-logo span { color: #f97316; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+</style>
 </head>
 <body>
+    <div id="page-loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-logo">Sell<span>vantix</span></div>
+    </div>
+
     <div class="min-h-screen bg-[#f1f5f9]">
         <!-- Navigation Livewire -->
         <livewire:layout.navigation />
@@ -390,5 +430,35 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     @yield('scripts')
+<script>
+    (function () {
+        const loader = document.getElementById('page-loader');
+
+        // Hide loader once everything is painted
+        function hideLoader() {
+            loader.classList.add('hidden');
+        }
+
+        if (document.readyState === 'complete') {
+            // Fonts + images already loaded (back/forward cache)
+            hideLoader();
+        } else {
+            window.addEventListener('load', hideLoader);
+        }
+
+        // Show loader again when the user navigates away
+        window.addEventListener('beforeunload', function () {
+            loader.classList.remove('hidden');
+        });
+
+        // Livewire: show loader on navigation start, hide on finish
+        document.addEventListener('livewire:navigating', function () {
+            loader.classList.remove('hidden');
+        });
+        document.addEventListener('livewire:navigated', function () {
+            hideLoader();
+        });
+    })();
+</script>
 </body>
 </html>
