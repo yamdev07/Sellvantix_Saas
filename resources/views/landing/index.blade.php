@@ -50,7 +50,7 @@
 
                 <div class="hero-stats animate-in" data-delay="400">
                     <div class="stat-item">
-                        <span class="stat-value counter" data-target="500" data-suffix="+">0</span>
+                        <span class="stat-value counter" data-target="30" data-suffix="+">0</span>
                         <span class="stat-label">Entreprises</span>
                     </div>
                     <div class="stat-divider"></div>
@@ -260,7 +260,7 @@
         <div class="container">
             <div class="stats-grid reveal">
                 <div class="stat-big">
-                    <span class="stat-number counter" data-target="500" data-suffix="+">0</span>
+                    <span class="stat-number counter" data-target="200" data-suffix="+">0</span>
                     <span class="stat-desc">Clients actifs</span>
                 </div>
                 <div class="stat-big">
@@ -435,7 +435,7 @@
         </div>
         <div class="container">
             <div class="cta-inner reveal">
-                <div class="cta-badge">🚀 Rejoignez 500+ commerçants</div>
+                <div class="cta-badge">🚀 Rejoignez 200+ commerçants</div>
                 <h2>Prêt à digitaliser<br>votre commerce ?</h2>
                 <p>Quincaillerie, librairie, épicerie, boutique… commencez dès aujourd'hui</p>
                 <div class="cta-actions">

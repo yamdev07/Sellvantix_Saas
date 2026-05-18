@@ -472,7 +472,7 @@
                 </div>
                 
                 <h2 class="cta-title">
-                    Rejoignez plus de <span class="text-gradient">500 commerçants</span>
+                    Rejoignez plus de <span class="text-gradient">200 commerçants</span>
                 </h2>
                 
                 <p class="cta-text">
