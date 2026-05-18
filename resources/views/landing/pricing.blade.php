@@ -310,7 +310,7 @@
         <div class="container">
             <div class="cta-card">
                 <h2 class="cta-title">Prêt à digitaliser votre commerce ?</h2>
-                <p class="cta-text">Quincaillerie, librairie, épicerie, boutique… rejoignez plus de 500 commerçants qui nous font confiance</p>
+                <p class="cta-text">Quincaillerie, librairie, épicerie, boutique… rejoignez plus de 200 commerçants qui nous font confiance</p>
                 <div class="cta-buttons">
                     <a href="{{ route('register.form') }}" class="cta-btn-primary">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
