@@ -37,7 +37,7 @@ Track inventory, manage sales, monitor suppliers, and pilot your business in rea
 
 ## 🚀 About the Project
 
-**Sellvantix** is a complete hardware store management system built for real operational use. It covers the entire business lifecycle — from supplier orders and stock management to sales, customer tracking, and business reporting.
+**Sellvantix** is a complete hardware store management system built for real operational use. It covers the entire business lifecycle from supplier orders and stock management to sales, customer tracking, and business reporting.
 
 Designed for **small and medium hardware stores** that need a reliable, offline-capable solution without the complexity of enterprise software.
 
