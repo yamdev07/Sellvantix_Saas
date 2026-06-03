@@ -34,13 +34,14 @@ trait TenantScope
         static::creating(function ($model) {
             if (Auth::check()) {
                 $user = Auth::user();
-                
-                // Tenant_id = la quincaillerie de l'utilisateur
+
                 $model->tenant_id = $user->tenant_id;
-                
-                // Owner_id = le créateur (pour traçabilité)
-                $ownerId = $user->isSuperAdmin() ? $user->id : ($user->owner_id ?? $user->id);
-                $model->owner_id = $ownerId;
+
+                // N'assigner owner_id que si la table le supporte
+                if (in_array('owner_id', $model->getFillable())) {
+                    $ownerId = $user->isSuperAdmin() ? $user->id : ($user->owner_id ?? $user->id);
+                    $model->owner_id = $ownerId;
+                }
             }
         });
     }
