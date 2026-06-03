@@ -8,7 +8,8 @@
       "Bash(ls .fly/scripts/)",
       "Bash(cat fly.toml)",
       "Bash(php artisan *)",
-      "Bash(mysql -u root -e \"CREATE DATABASE IF NOT EXISTS testing CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\")"
+      "Bash(mysql -u root -e \"CREATE DATABASE IF NOT EXISTS testing CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\")",
+      "Bash(git checkout *)"
     ]
   }
 }

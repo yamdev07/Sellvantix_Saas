@@ -12,13 +12,13 @@ new class extends Component
     {
         $logout();
 
-        $this->redirect('/', navigate: true);
+        $this->redirect(route('landing'));
     }
 }; ?>
 
 <nav x-data="{ open: false }" class="qapp-nav">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="w-full px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo Sellvantix - EXTRÊME GAUCHE -->
@@ -451,6 +451,7 @@ new class extends Component
         overflow: hidden;
         font-size: 0.875rem;
         font-weight: 500;
+        white-space: nowrap;
     }
 
     .qapp-nav-link::before {
@@ -492,6 +493,8 @@ new class extends Component
         border: 1px solid rgba(249, 115, 22, 0.13);
         cursor: pointer;
         transition: all 0.2s ease;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .qapp-user-btn:hover {
@@ -517,11 +520,13 @@ new class extends Component
         font-size: 0.875rem;
         font-weight: 600;
         color: #f5f3ef;
+        white-space: nowrap;
     }
 
     .qapp-user-role {
         font-size: 0.6875rem;
         color: #55535f;
+        white-space: nowrap;
     }
 
     .qapp-hamburger-btn {
