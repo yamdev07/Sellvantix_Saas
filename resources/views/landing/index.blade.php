@@ -559,7 +559,13 @@
     margin-bottom: 24px;
     color: #fff;
 }
-.typed-wrapper { position: relative; display: inline-block; }
+.typed-wrapper {
+    position: relative;
+    display: inline-block;
+    min-width: 0;          /* will be set by JS */
+    text-align: left;
+    vertical-align: bottom;
+}
 .typed-cursor {
     display: inline-block;
     color: var(--orange-500);
@@ -1244,6 +1250,17 @@ document.addEventListener('DOMContentLoaded', function () {
     let wi = 0, ci = 0, deleting = false;
     const el = document.getElementById('typed-word');
     if (el) {
+        // Fix wrapper width to the longest word before animation starts
+        // This prevents layout shifts (trembling) when words change size
+        const wrapper = el.parentElement;
+        const probe = el.cloneNode(false);
+        probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;';
+        wrapper.appendChild(probe);
+        let maxW = 0;
+        words.forEach(w => { probe.textContent = w; maxW = Math.max(maxW, probe.offsetWidth); });
+        wrapper.style.minWidth = maxW + 'px';
+        wrapper.removeChild(probe);
+
         function typeStep() {
             const word = words[wi];
             if (!deleting) {
