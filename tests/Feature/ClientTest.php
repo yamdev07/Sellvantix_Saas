@@ -42,13 +42,33 @@ class ClientTest extends TestCase
         ]);
     }
 
-    public function test_cashier_cannot_create_client(): void
+    public function test_cashier_can_create_client(): void
     {
         $response = $this->actingAs($this->cashier)->post(route('clients.store'), [
-            'name' => 'Jean Dupont',
+            'name'  => 'Jean Dupont',
+            'phone' => '97000001',
         ]);
 
-        $response->assertStatus(403);
+        $response->assertRedirect(route('clients.index'));
+        $this->assertDatabaseHas('clients', [
+            'name'      => 'Jean Dupont',
+            'tenant_id' => $this->tenant->id,
+        ]);
+    }
+
+    public function test_cashier_can_quick_create_client(): void
+    {
+        $response = $this->actingAs($this->cashier)->postJson(route('clients.quick-store'), [
+            'name'  => 'Quick Client',
+            'phone' => '97000002',
+        ]);
+
+        $response->assertOk();
+        $response->assertJson(['success' => true]);
+        $this->assertDatabaseHas('clients', [
+            'name'      => 'Quick Client',
+            'tenant_id' => $this->tenant->id,
+        ]);
     }
 
     public function test_duplicate_email_within_same_tenant_is_rejected(): void
