@@ -1,10 +1,17 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "yamdev07/sellvantix",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
-    "license": "MIT",
+    "description": "Sellvantix — Retail Management SaaS for West African businesses.",
+    "keywords": ["saas", "stock", "retail", "africa", "benin"],
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Yoann Yamd",
+            "email": "contact@yyamd.com",
+            "role": "Owner & Lead Developer"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
