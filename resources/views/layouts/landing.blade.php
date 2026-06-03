@@ -496,10 +496,8 @@
                     <h3>Sellvantix</h3>
                     <p>Le logiciel complet pour gérer votre stock et vos ventes. Produits, clients, fournisseurs et rapports en un seul endroit.</p>
                     <div class="social-links">
-                        <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
-                        <a href="#" class="social-link"><i class="bi bi-github"></i></a>
+                        <a href="https://wa.me/22990422588" target="_blank" rel="noopener" class="social-link"><i class="bi bi-whatsapp"></i></a>
+                        <a href="mailto:contact@yyamd.com" class="social-link"><i class="bi bi-envelope-fill"></i></a>
                     </div>
                 </div>
 
@@ -510,36 +508,32 @@
                         <li><a href="{{ route('pricing') }}">Tarifs</a></li>
                         <li><a href="{{ route('features') }}">Fonctionnalités</a></li>
                         <li><a href="{{ route('guide') }}">Guide d'utilisation</a></li>
+                        <li><a href="{{ route('faq') }}">FAQ</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
-                    <h4>Entreprise</h4>
+                    <h4>Contact</h4>
                     <ul class="footer-links">
-                        <li><a href="#">À propos</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Carrières</a></li>
-                        <li><a href="mailto:contact@yyamd.com">Contact</a></li>
+                        <li><a href="mailto:contact@yyamd.com">contact@yyamd.com</a></li>
+                        <li><a href="https://wa.me/22990422588" target="_blank" rel="noopener">WhatsApp : +229 90 42 25 88</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
                     <h4>Légal</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Conditions d'utilisation</a></li>
-                        <li><a href="#">Politique de confidentialité</a></li>
-                        <li><a href="#">Mentions légales</a></li>
-                        <li><a href="#">CGV</a></li>
+                        <li><a href="#" onclick="openLegalModal('modal-footer-terms'); return false;">Conditions d'utilisation</a></li>
+                        <li><a href="#" onclick="openLegalModal('modal-footer-privacy'); return false;">Politique de confidentialité</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
                     <h4>Support</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Centre d'aide</a></li>
-                        <li><a href="#">Documentation</a></li>
+                        <li><a href="{{ route('faq') }}">Centre d'aide</a></li>
+                        <li><a href="{{ route('guide') }}">Documentation</a></li>
                         <li><a href="mailto:contact@yyamd.com">Support technique</a></li>
-                        <li><a href="#">Status</a></li>
                     </ul>
                 </div>
             </div>
@@ -625,6 +619,77 @@
         }
         .whatsapp-float:hover .whatsapp-tooltip { opacity: 1; }
     </style>
+
+    <!-- Modales légales footer -->
+    <div id="modal-footer-terms" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeLegalModal('modal-footer-terms')">
+        <div style="background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:40px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                <h2 style="font-size:22px;font-weight:700;color:#0f172a;margin:0">Conditions d'utilisation</h2>
+                <button onclick="closeLegalModal('modal-footer-terms')" style="background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;line-height:1">&times;</button>
+            </div>
+            <div style="font-size:14px;line-height:1.8;color:#334155;">
+                <p><strong>Dernière mise à jour :</strong> Juin 2026</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">1. Acceptation des conditions</h3>
+                <p>En accédant à Sellvantix, vous acceptez d'être lié par les présentes conditions d'utilisation.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">2. Description du service</h3>
+                <p>Sellvantix est une plateforme SaaS de gestion de stock, de ventes et de clients destinée aux commerces de détail en Afrique de l'Ouest. Nous offrons une période d'essai gratuite de 14 jours sans engagement.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">3. Compte utilisateur</h3>
+                <p>Vous êtes responsable de la confidentialité de vos identifiants et de toutes les activités réalisées sous votre compte.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">4. Abonnement et paiement</h3>
+                <p>Les abonnements sont facturés mensuellement ou annuellement selon le plan choisi. Le renouvellement est automatique sauf résiliation explicite.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">5. Données</h3>
+                <p>Vos données restent votre propriété. En cas de résiliation, elles sont exportables pendant 30 jours puis supprimées.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">6. Contact</h3>
+                <p><a href="mailto:contact@yyamd.com" style="color:#f97316">contact@yyamd.com</a> — WhatsApp : +229 90 42 25 88</p>
+            </div>
+            <div style="margin-top:28px;text-align:right;">
+                <button onclick="closeLegalModal('modal-footer-terms')" style="background:#f97316;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:14px;">J'ai compris</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-footer-privacy" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeLegalModal('modal-footer-privacy')">
+        <div style="background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:40px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                <h2 style="font-size:22px;font-weight:700;color:#0f172a;margin:0">Politique de confidentialité</h2>
+                <button onclick="closeLegalModal('modal-footer-privacy')" style="background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;line-height:1">&times;</button>
+            </div>
+            <div style="font-size:14px;line-height:1.8;color:#334155;">
+                <p><strong>Dernière mise à jour :</strong> Juin 2026</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">1. Données collectées</h3>
+                <p>Nous collectons les informations fournies lors de la création de votre compte (nom, email, entreprise) et les données d'utilisation du service.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">2. Utilisation des données</h3>
+                <p>Vos données sont utilisées uniquement pour fournir et améliorer Sellvantix. Elles ne sont jamais vendues ni partagées avec des tiers.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">3. Sécurité</h3>
+                <p>Vos données sont chiffrées en transit (HTTPS) et au repos. L'accès est strictement limité.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">4. Cookies</h3>
+                <p>Uniquement des cookies essentiels pour maintenir votre session. Aucun cookie publicitaire ou de tracking tiers.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">5. Vos droits</h3>
+                <p>Accès, modification ou suppression de vos données sur demande à <a href="mailto:contact@yyamd.com" style="color:#f97316">contact@yyamd.com</a>.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">6. Conservation</h3>
+                <p>Données conservées pendant toute la durée de l'abonnement et 30 jours après résiliation.</p>
+            </div>
+            <div style="margin-top:28px;text-align:right;">
+                <button onclick="closeLegalModal('modal-footer-privacy')" style="background:#f97316;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:14px;">J'ai compris</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openLegalModal(id) {
+            document.getElementById(id).style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLegalModal(id) {
+            document.getElementById(id).style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                ['modal-footer-terms','modal-footer-privacy'].forEach(closeLegalModal);
+            }
+        });
+    </script>
 
     <script>
         (function () {
