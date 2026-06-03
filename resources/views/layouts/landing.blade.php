@@ -74,6 +74,10 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-body);

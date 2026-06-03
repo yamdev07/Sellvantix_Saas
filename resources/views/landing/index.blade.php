@@ -836,6 +836,7 @@
     padding: 100px 0;
     background: var(--gray-50);
     position: relative;
+    overflow: hidden;
 }
 
 .features-bg-dots {
@@ -1035,7 +1036,7 @@
 /* ══════════════════════════════════════════════════════════
    TESTIMONIALS CAROUSEL
 ══════════════════════════════════════════════════════════ */
-.testimonials-section { padding: 100px 0; background: var(--gray-50); }
+.testimonials-section { padding: 100px 0; background: var(--gray-50); overflow: hidden; }
 
 .testimonials-carousel { position: relative; overflow: hidden; }
 .tc-track {
@@ -1085,7 +1086,7 @@
 /* ══════════════════════════════════════════════════════════
    FAQ ACCORDÉON
 ══════════════════════════════════════════════════════════ */
-.faq-section { padding: 100px 0; background: #fff; }
+.faq-section { padding: 100px 0; background: #fff; overflow: hidden; }
 
 .faq-accordion { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
 
