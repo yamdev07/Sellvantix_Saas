@@ -67,8 +67,8 @@ class ClientController extends Controller
      */
     public function create()
     {
-        $this->authorizeAdmin();
-        
+        $this->authorizeSalesAccess();
+
         return view('clients.create');
     }
 
@@ -77,8 +77,8 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorizeAdmin();
-        
+        $this->authorizeSalesAccess();
+
         $tenantId = Auth::user()->tenant_id;
 
         $request->validate([
@@ -96,6 +96,46 @@ class ClientController extends Controller
 
         return redirect()->route('clients.index')
                          ->with('success', 'Client ajouté avec succès ✅');
+    }
+
+    /**
+     * Création rapide d'un client (AJAX) depuis le formulaire de vente.
+     * Accessible à tous ceux qui peuvent gérer les ventes (dont les caissiers).
+     */
+    public function quickStore(Request $request)
+    {
+        $this->authorizeSalesAccess();
+
+        $tenantId = Auth::user()->tenant_id;
+
+        // Convertir les chaînes vides en null pour que les règles "nullable" s'appliquent
+        $request->merge([
+            'email' => $request->filled('email') ? $request->email : null,
+            'phone' => $request->filled('phone') ? $request->phone : null,
+        ]);
+
+        $validated = $request->validate([
+            'name'  => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'email' => [
+                'nullable', 'email', 'max:255',
+                Rule::unique('clients', 'email')->where('tenant_id', $tenantId),
+            ],
+        ], [
+            'name.required' => 'Le nom du client est obligatoire.',
+            'email.unique'  => 'Un client avec cet email existe déjà dans votre boutique.',
+        ]);
+
+        $client = Client::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'client'  => [
+                'id'    => $client->id,
+                'name'  => $client->name,
+                'phone' => $client->phone,
+            ],
+        ]);
     }
 
     /**

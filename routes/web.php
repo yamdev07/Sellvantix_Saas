@@ -204,6 +204,8 @@ Route::middleware(['auth', 'check.trial'])->group(function () {
         Route::get('/search', [ClientController::class, 'search'])->name('search');
         Route::get('/create', [ClientController::class, 'create'])->name('create');
         Route::post('/', [ClientController::class, 'store'])->name('store');
+        // Création rapide depuis le formulaire de vente (accessible aux caissiers)
+        Route::post('/quick', [ClientController::class, 'quickStore'])->name('quick-store');
         Route::get('/{client}', [ClientController::class, 'show'])->name('show');
         Route::get('/{client}/edit', [ClientController::class, 'edit'])->name('edit');
         Route::put('/{client}', [ClientController::class, 'update'])->name('update');

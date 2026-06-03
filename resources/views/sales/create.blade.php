@@ -202,6 +202,42 @@
     .btn-submit:hover::after { transform: translateX(100%); }
     .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(249,115,22,.4); }
     .btn-submit:active { transform: none; }
+
+    /* MODAL NOUVEAU CLIENT */
+    .sv-modal-overlay {
+        display: none; position: fixed; inset: 0; z-index: 9999;
+        background: rgba(15,23,42,.55); padding: 20px;
+        align-items: center; justify-content: center;
+    }
+    .sv-modal-overlay.open { display: flex; }
+    .sv-modal {
+        background: #fff; width: 100%; max-width: 420px;
+        border-radius: 18px; overflow: hidden;
+        box-shadow: 0 24px 60px rgba(15,23,42,.3);
+        animation: fadeUp .2s ease both;
+    }
+    .sv-modal-hd {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 22px; border-bottom: 1px solid var(--border);
+    }
+    .sv-modal-title { font-size: 16px; font-weight: 700; color: var(--text); }
+    .sv-modal-close {
+        background: none; border: none; font-size: 26px; line-height: 1;
+        color: var(--text-3); cursor: pointer; transition: color .15s;
+    }
+    .sv-modal-close:hover { color: var(--text); }
+    .sv-modal-body { padding: 20px 22px; }
+    .sv-modal-ft {
+        display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+        padding: 16px 22px; border-top: 1px solid var(--border); background: #fafbfd;
+    }
+    .sv-modal-err {
+        display: none; background: var(--danger-pale, #fef2f2);
+        border: 1px solid rgba(220,38,38,.3); border-radius: 10px;
+        padding: 10px 12px; margin-bottom: 14px;
+        font-size: 12.5px; color: var(--danger);
+    }
+    .sv-modal-err.show { display: block; }
 </style>
 @endsection
 
@@ -255,6 +291,36 @@
                             <option value="{{ $client->id }}">{{ $client->name }}{{ $client->phone ? ' · '.$client->phone : '' }}</option>
                         @endforeach
                     </select>
+                </div>
+                <button type="button" class="sv-add-btn" id="openNewClientBtn" style="margin-top:10px;">
+                    <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Nouveau client
+                </button>
+            </div>
+        </div>
+
+        {{-- MODAL : création rapide de client --}}
+        <div class="sv-modal-overlay" id="newClientModal">
+            <div class="sv-modal">
+                <div class="sv-modal-hd">
+                    <span class="sv-modal-title">Nouveau client</span>
+                    <button type="button" class="sv-modal-close" id="closeNewClientBtn" aria-label="Fermer">&times;</button>
+                </div>
+                <div class="sv-modal-body">
+                    <div class="sv-modal-err" id="newClientErr"></div>
+                    <label class="sv-label" for="nc_name">Nom <span style="color:var(--danger)">*</span></label>
+                    <input type="text" id="nc_name" class="sv-input-plain" placeholder="Nom du client" autocomplete="off" style="margin-bottom:12px;">
+                    <label class="sv-label" for="nc_phone">Téléphone</label>
+                    <input type="text" id="nc_phone" class="sv-input-plain" placeholder="Ex : 0190000000" inputmode="numeric" autocomplete="off" style="margin-bottom:12px;">
+                    <label class="sv-label" for="nc_email">Email</label>
+                    <input type="email" id="nc_email" class="sv-input-plain" placeholder="email@exemple.com (optionnel)" autocomplete="off">
+                </div>
+                <div class="sv-modal-ft">
+                    <button type="button" class="btn-reset" id="cancelNewClientBtn">Annuler</button>
+                    <button type="button" class="btn-submit" id="saveNewClientBtn">
+                        <svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        Enregistrer
+                    </button>
                 </div>
             </div>
         </div>
@@ -488,6 +554,86 @@ document.addEventListener('DOMContentLoaded', function () {
 
     container.querySelectorAll('.sv-product-row').forEach(initRow);
     updateSummary();
+
+    /* ─────────── MODAL NOUVEAU CLIENT ─────────── */
+    const ncModal   = document.getElementById('newClientModal');
+    const ncErr     = document.getElementById('newClientErr');
+    const ncName    = document.getElementById('nc_name');
+    const ncPhone   = document.getElementById('nc_phone');
+    const ncEmail   = document.getElementById('nc_email');
+    const clientSel = document.getElementById('client_id');
+    const saveBtn   = document.getElementById('saveNewClientBtn');
+    const csrf      = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    function openNcModal() {
+        ncErr.classList.remove('show'); ncErr.textContent = '';
+        ncName.value = ''; ncPhone.value = ''; ncEmail.value = '';
+        ncModal.classList.add('open');
+        setTimeout(() => ncName.focus(), 50);
+    }
+    function closeNcModal() { ncModal.classList.remove('open'); }
+
+    // Téléphone : chiffres uniquement
+    ncPhone.addEventListener('input', () => { ncPhone.value = ncPhone.value.replace(/[^0-9]/g, ''); });
+
+    document.getElementById('openNewClientBtn').addEventListener('click', openNcModal);
+    document.getElementById('closeNewClientBtn').addEventListener('click', closeNcModal);
+    document.getElementById('cancelNewClientBtn').addEventListener('click', closeNcModal);
+    ncModal.addEventListener('click', e => { if (e.target === ncModal) closeNcModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && ncModal.classList.contains('open')) closeNcModal(); });
+
+    saveBtn.addEventListener('click', async () => {
+        ncErr.classList.remove('show'); ncErr.textContent = '';
+        if (!ncName.value.trim()) {
+            ncErr.textContent = 'Le nom du client est obligatoire.';
+            ncErr.classList.add('show');
+            ncName.focus();
+            return;
+        }
+
+        saveBtn.disabled = true;
+        const original = saveBtn.innerHTML;
+        saveBtn.textContent = 'Enregistrement…';
+
+        try {
+            const res = await fetch('{{ route('clients.quick-store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrf,
+                },
+                body: JSON.stringify({
+                    name:  ncName.value.trim(),
+                    phone: ncPhone.value.trim(),
+                    email: ncEmail.value.trim(),
+                }),
+            });
+
+            if (res.status === 422) {
+                const data = await res.json();
+                const msgs = Object.values(data.errors || {}).flat();
+                ncErr.textContent = msgs.join(' ') || 'Données invalides.';
+                ncErr.classList.add('show');
+                return;
+            }
+
+            if (!res.ok) throw new Error('Erreur serveur');
+
+            const data = await res.json();
+            const c = data.client;
+            const opt = new Option(c.name + (c.phone ? ' · ' + c.phone : ''), c.id, true, true);
+            clientSel.add(opt);
+            clientSel.value = c.id;
+            closeNcModal();
+        } catch (err) {
+            ncErr.textContent = 'Impossible de créer le client. Réessayez.';
+            ncErr.classList.add('show');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = original;
+        }
+    });
 });
 </script>
 @endsection
