@@ -37,9 +37,24 @@
             </div>
 
             <div class="register-card-body">
-                <form method="POST" action="{{ route('register.tenant') }}" id="registerForm">
+                <form method="POST" action="{{ route('register.tenant') }}" id="registerForm" novalidate>
                     @csrf
                     <input type="hidden" name="plan" value="{{ $plan }}">
+
+                    {{-- Bannière d'erreur globale --}}
+                    @if(session('error'))
+                        <div class="alert-error" id="globalError">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>{{ session('error') }}</span>
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div class="alert-error" id="globalError">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>Veuillez corriger les erreurs ci-dessous avant de continuer.</span>
+                        </div>
+                    @endif
 
                     {{-- Informations entreprise --}}
                     <div class="section-title">
@@ -51,17 +66,18 @@
                         <label for="company_name" class="form-label">
                             Nom de l'entreprise <span class="required">*</span>
                         </label>
-                        <input type="text" 
+                        <input type="text"
                                id="company_name"
-                               name="company_name" 
-                               class="form-control @error('company_name') error @enderror" 
+                               name="company_name"
+                               class="form-control @error('company_name') error @enderror"
                                value="{{ old('company_name') }}"
                                placeholder="Ex: Mon Entreprise"
+                               maxlength="100"
                                required>
+                        <div class="char-hint" id="hint-company_name"></div>
                         @error('company_name')
                             <div class="error-message">
-                                <i class="bi bi-exclamation-circle"></i>
-                                {{ $message }}
+                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
                             </div>
                         @enderror
                     </div>
@@ -71,25 +87,23 @@
                             Sous-domaine <span class="required">*</span>
                         </label>
                         <div class="input-group">
-                            <input type="text" 
+                            <input type="text"
                                    id="subdomain"
-                                   name="subdomain" 
-                                   class="form-control @error('subdomain') error @enderror" 
+                                   name="subdomain"
+                                   class="form-control @error('subdomain') error @enderror"
                                    value="{{ old('subdomain') }}"
                                    placeholder="mon-entreprise"
-                                   pattern="[a-z0-9\-]+"
-                                   title="Lettres minuscules, chiffres et tirets uniquement"
+                                   maxlength="50"
                                    required>
                             <span class="input-group-text">.quincaapp.com</span>
                         </div>
                         <div class="help-text">
                             <i class="bi bi-info-circle"></i>
-                            Uniquement lettres minuscules, chiffres et tirets
+                            Lettres minuscules, chiffres et tirets uniquement
                         </div>
                         @error('subdomain')
                             <div class="error-message">
-                                <i class="bi bi-exclamation-circle"></i>
-                                {{ $message }}
+                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
                             </div>
                         @enderror
                     </div>
@@ -97,22 +111,27 @@
                     <div class="form-row">
                         <div class="form-group half">
                             <label for="address" class="form-label">Adresse</label>
-                            <input type="text" 
+                            <input type="text"
                                    id="address"
-                                   name="address" 
-                                   class="form-control" 
+                                   name="address"
+                                   class="form-control"
                                    value="{{ old('address') }}"
-                                   placeholder="Adresse de votre entreprise">
+                                   placeholder="Adresse de votre entreprise"
+                                   maxlength="200">
                         </div>
 
                         <div class="form-group half">
                             <label for="phone" class="form-label">Téléphone</label>
-                            <input type="tel" 
+                            <input type="tel"
                                    id="phone"
-                                   name="phone" 
-                                   class="form-control" 
+                                   name="phone"
+                                   class="form-control"
                                    value="{{ old('phone') }}"
-                                   placeholder="+221 77 123 45 67">
+                                   placeholder="+229 90 42 25 88"
+                                   maxlength="20"
+                                   inputmode="tel"
+                                   pattern="[\+0-9\s\-]+"
+                                   title="Chiffres, +, espaces et tirets uniquement">
                         </div>
                     </div>
 
@@ -126,17 +145,17 @@
                         <label for="name" class="form-label">
                             Nom complet <span class="required">*</span>
                         </label>
-                        <input type="text" 
+                        <input type="text"
                                id="name"
-                               name="name" 
-                               class="form-control @error('name') error @enderror" 
+                               name="name"
+                               class="form-control @error('name') error @enderror"
                                value="{{ old('name') }}"
                                placeholder="Jean Dupont"
+                               maxlength="100"
                                required>
                         @error('name')
                             <div class="error-message">
-                                <i class="bi bi-exclamation-circle"></i>
-                                {{ $message }}
+                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
                             </div>
                         @enderror
                     </div>
@@ -145,17 +164,17 @@
                         <label for="email" class="form-label">
                             Email professionnel <span class="required">*</span>
                         </label>
-                        <input type="email" 
+                        <input type="email"
                                id="email"
-                               name="email" 
-                               class="form-control @error('email') error @enderror" 
+                               name="email"
+                               class="form-control @error('email') error @enderror"
                                value="{{ old('email') }}"
                                placeholder="contact@votre-entreprise.com"
+                               maxlength="150"
                                required>
                         @error('email')
                             <div class="error-message">
-                                <i class="bi bi-exclamation-circle"></i>
-                                {{ $message }}
+                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
                             </div>
                         @enderror
                     </div>
@@ -527,6 +546,29 @@
     transform: none;
 }
 
+.alert-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+.alert-error i { font-size: 18px; flex-shrink: 0; }
+.char-hint {
+    font-size: 11px;
+    color: #94a3b8;
+    text-align: right;
+    margin-top: 4px;
+}
+.char-hint.warn { color: #f97316; }
+.char-hint.danger { color: #ef4444; font-weight: 600; }
+
 .terms-note {
     text-align: center;
     margin-top: 24px;
@@ -625,22 +667,65 @@
 </style>
 
 <script>
-document.getElementById('registerForm')?.addEventListener('submit', function(e) {
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.innerHTML = `
-        <i class="bi bi-arrow-repeat" style="animation: spin 1s linear infinite;"></i>
-        Création en cours...
-    `;
-    submitBtn.disabled = true;
+// Scroll to first error or global alert on page load
+window.addEventListener('DOMContentLoaded', function () {
+    const firstError = document.getElementById('globalError')
+        || document.querySelector('.error-message')
+        || document.querySelector('.error');
+    if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 });
 
-// Validation en temps réel du sous-domaine
+// Character counter for inputs with maxlength
+document.querySelectorAll('input[maxlength]').forEach(function (input) {
+    const hintId = 'hint-' + input.name;
+    const hint = document.getElementById(hintId);
+    if (!hint) return;
+    const max = parseInt(input.maxLength);
+    function update() {
+        const left = max - input.value.length;
+        hint.textContent = left + ' / ' + max + ' caractères restants';
+        hint.className = 'char-hint' + (left <= 10 ? ' danger' : left <= 20 ? ' warn' : '');
+    }
+    input.addEventListener('input', update);
+    update();
+});
+
+// Subdomain: auto-format
 const subdomainInput = document.querySelector('input[name="subdomain"]');
 if (subdomainInput) {
-    subdomainInput.addEventListener('input', function(e) {
+    subdomainInput.addEventListener('input', function () {
         this.value = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
     });
 }
+
+// Phone: digits, +, spaces and dashes only
+const phoneInput = document.querySelector('input[name="phone"]');
+if (phoneInput) {
+    phoneInput.addEventListener('input', function () {
+        this.value = this.value.replace(/[^0-9\+\s\-]/g, '');
+    });
+}
+
+// Submit: validate first, then disable button
+document.getElementById('registerForm')?.addEventListener('submit', function (e) {
+    const required = this.querySelectorAll('[required]');
+    let valid = true;
+    required.forEach(function (field) {
+        if (!field.value.trim()) { valid = false; field.classList.add('error'); }
+        else { field.classList.remove('error'); }
+    });
+    if (!valid) {
+        e.preventDefault();
+        const firstInvalid = this.querySelector('.error');
+        if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.innerHTML = '<i class="bi bi-arrow-repeat" style="animation:spin 1s linear infinite"></i> Création en cours...';
+    submitBtn.disabled = true;
+});
 
 function openModal(id) {
     document.getElementById(id).style.display = 'flex';

@@ -34,28 +34,28 @@ return [
     |--------------------------------------------------------------------------
     */
     'fedapay' => [
-        // Clés API (à obtenir depuis votre dashboard FedaPay en mode test)
-        'api_key' => env('FEDAPAY_API_KEY'),
+        'api_key'    => env('FEDAPAY_API_KEY'),
         'public_key' => env('FEDAPAY_PUBLIC_KEY'),
         'secret_key' => env('FEDAPAY_SECRET_KEY'),
-        
-        // Mode TEST (sandbox)
+
+        // 'sandbox' or 'live'
         'mode' => env('FEDAPAY_MODE', 'sandbox'),
-        
-        // URL de retour après paiement (pour les tests en local)
-        'return_url' => env('FEDAPAY_RETURN_URL', 'http://localhost:8000/payment/callback'),
-        
-        // URLs API (sandbox)
-        'base_url' => 'https://sandbox-api.fedapay.com',
-        
-        // URL de paiement (pour redirection en test)
-        'payment_url' => 'https://sandbox-payment.fedapay.com/pay/',
-        
-        // Timeout des requêtes
+
+        'return_url' => env('FEDAPAY_RETURN_URL', env('APP_URL') . '/payment/callback'),
+
+        // URLs switch automatiquement selon le mode
+        'base_url'    => env('FEDAPAY_MODE', 'sandbox') === 'live'
+            ? 'https://api.fedapay.com'
+            : 'https://sandbox-api.fedapay.com',
+
+        'payment_url' => env('FEDAPAY_MODE', 'sandbox') === 'live'
+            ? 'https://payment.fedapay.com/pay/'
+            : 'https://sandbox-payment.fedapay.com/pay/',
+
         'timeout' => env('FEDAPAY_TIMEOUT', 30),
-        
-        // Activer le mode debug pour voir les erreurs
-        'debug' => env('FEDAPAY_DEBUG', true),
+
+        // Debug OFF en live pour ne pas exposer les détails d'erreur
+        'debug' => env('FEDAPAY_DEBUG', env('FEDAPAY_MODE', 'sandbox') !== 'live'),
         
         // Devises supportées en test
         'currencies' => ['XOF', 'XAF', 'CDF', 'GNF'],

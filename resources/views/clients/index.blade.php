@@ -557,7 +557,7 @@
                 <div class="sc-sub">Consultez et gérez votre base de clients</div>
             </div>
         </div>
-        @if(auth()->user()->isSuperAdminGlobal() || auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
+        @if(auth()->user()->canManageSales())
             <a href="{{ route('clients.create') }}" class="btn-primary">
                 <svg viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -738,7 +738,7 @@
                                     </div>
                                     <h3>Aucun client trouvé</h3>
                                     <p>Commencez par ajouter votre premier client</p>
-                                    @if(auth()->user()->isSuperAdminGlobal() || auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
+                                    @if(auth()->user()->canManageSales())
                                         <a href="{{ route('clients.create') }}" class="btn-primary">
                                             <svg viewBox="0 0 24 24" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />

@@ -337,7 +337,7 @@
                 <div class="sl-page-sub">Suivez l'ensemble des transactions de votre activité</div>
             </div>
         </div>
-        @if(!in_array(auth()->user()->role, ['cashier']))
+        @if(auth()->user()->canManageSales())
         <a href="{{ route('sales.create') }}" class="btn-primary">
             <svg viewBox="0 0 24 24" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
@@ -507,10 +507,10 @@
 
                                     @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin']))
                                         <form action="{{ route('sales.destroy', $sale->id) }}" method="POST"
-                                              onsubmit="return confirm('Supprimer cette vente ?')" style="display:inline;">
+                                              onsubmit="return confirm('Annuler cette vente ? Le stock sera restauré.')" style="display:inline;">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="sl-btn sl-btn-del" title="Supprimer">
-                                                <svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                            <button type="submit" class="sl-btn sl-btn-del" title="Annuler la vente">
+                                                <svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9l6 6m0-6l-6 6M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                             </button>
                                         </form>
                                     @endif
@@ -526,7 +526,7 @@
                                     </div>
                                     <h3>Aucune vente enregistrée</h3>
                                     <p>Commencez par enregistrer votre première transaction</p>
-                                    @if(!in_array(auth()->user()->role, ['cashier']))
+                                    @if(auth()->user()->canManageSales())
                                     <a href="{{ route('sales.create') }}" class="btn-primary" style="display:inline-flex;margin:0 auto;">
                                         <svg viewBox="0 0 24 24" stroke-width="2.5" style="width:15px;height:15px;stroke:#fff;fill:none;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
                                         Créer la première vente
