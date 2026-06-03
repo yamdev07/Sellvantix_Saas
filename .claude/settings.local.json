@@ -13,7 +13,9 @@
       "Bash(php -l app/Http/Controllers/ClientController.php)",
       "Bash(sed -n '32,50p' app/Http/Controllers/CategoryController.php)",
       "Bash(sed -n '449,453p' app/Http/Controllers/ProductController.php)",
-      "Bash(sed -n '314,320p' app/Http/Controllers/ProductController.php)"
+      "Bash(sed -n '314,320p' app/Http/Controllers/ProductController.php)",
+      "Bash(./vendor/bin/phpunit --filter ClientTest)",
+      "Bash(./vendor/bin/phpunit --filter test_cashier_can_quick_create_client)"
     ]
   }
 }
