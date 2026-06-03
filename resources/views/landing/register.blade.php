@@ -200,9 +200,9 @@
                     </button>
 
                     <div class="terms-note">
-                        En créant votre compte, vous acceptez nos 
-                        <a href="#">conditions d'utilisation</a> et 
-                        <a href="#">politique de confidentialité</a>.
+                        En créant votre compte, vous acceptez nos
+                        <a href="#" onclick="openModal('modal-terms'); return false;">conditions d'utilisation</a> et
+                        <a href="#" onclick="openModal('modal-privacy'); return false;">politique de confidentialité</a>.
                     </div>
                 </form>
             </div>
@@ -641,5 +641,88 @@ if (subdomainInput) {
         this.value = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
     });
 }
+
+function openModal(id) {
+    document.getElementById(id).style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        ['modal-terms', 'modal-privacy'].forEach(closeModal);
+    }
+});
 </script>
+
+<!-- Modal Conditions d'utilisation -->
+<div id="modal-terms" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeModal('modal-terms')">
+    <div style="background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:40px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+            <h2 style="font-size:22px;font-weight:700;color:#0f172a;margin:0">Conditions d'utilisation</h2>
+            <button onclick="closeModal('modal-terms')" style="background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;line-height:1">&times;</button>
+        </div>
+        <div style="font-size:14px;line-height:1.8;color:#334155;">
+            <p><strong>Dernière mise à jour :</strong> Juin 2026</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">1. Acceptation des conditions</h3>
+            <p>En accédant à Sellvantix, vous acceptez d'être lié par les présentes conditions d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service.</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">2. Description du service</h3>
+            <p>Sellvantix est une plateforme SaaS de gestion de stock, de ventes et de clients destinée aux commerces de détail en Afrique de l'Ouest. Nous offrons une période d'essai gratuite de 14 jours sans engagement.</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">3. Compte utilisateur</h3>
+            <p>Vous êtes responsable de la confidentialité de vos identifiants de connexion et de toutes les activités réalisées sous votre compte. Vous devez nous notifier immédiatement de toute utilisation non autorisée.</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">4. Abonnement et paiement</h3>
+            <p>Les abonnements sont facturés mensuellement ou annuellement selon le plan choisi. Le renouvellement est automatique sauf résiliation explicite avant la date de renouvellement.</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">5. Données</h3>
+            <p>Vos données restent votre propriété. Nous ne les cédons pas à des tiers. En cas de résiliation, vos données sont exportables pendant 30 jours puis supprimées.</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">6. Contact</h3>
+            <p>Pour toute question : <a href="mailto:contact@yyamd.com" style="color:#f97316">contact@yyamd.com</a> ou WhatsApp : +229 90 42 25 88</p>
+        </div>
+        <div style="margin-top:28px;text-align:right;">
+            <button onclick="closeModal('modal-terms')" style="background:#f97316;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:14px;">J'ai compris</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Politique de confidentialité -->
+<div id="modal-privacy" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeModal('modal-privacy')">
+    <div style="background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:40px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+            <h2 style="font-size:22px;font-weight:700;color:#0f172a;margin:0">Politique de confidentialité</h2>
+            <button onclick="closeModal('modal-privacy')" style="background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;line-height:1">&times;</button>
+        </div>
+        <div style="font-size:14px;line-height:1.8;color:#334155;">
+            <p><strong>Dernière mise à jour :</strong> Juin 2026</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">1. Données collectées</h3>
+            <p>Nous collectons les informations que vous fournissez lors de la création de votre compte (nom, email, nom de l'entreprise) ainsi que les données d'utilisation du service (ventes, stocks, clients).</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">2. Utilisation des données</h3>
+            <p>Vos données sont utilisées uniquement pour fournir et améliorer le service Sellvantix. Elles ne sont jamais vendues ni partagées avec des tiers à des fins commerciales.</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">3. Sécurité</h3>
+            <p>Vos données sont chiffrées en transit (HTTPS) et au repos. L'accès est strictement limité aux membres de notre équipe ayant besoin d'en connaître.</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">4. Cookies</h3>
+            <p>Nous utilisons des cookies essentiels pour maintenir votre session. Aucun cookie publicitaire ou de tracking tiers n'est utilisé.</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">5. Vos droits</h3>
+            <p>Vous pouvez à tout moment demander l'accès, la modification ou la suppression de vos données en nous contactant à <a href="mailto:contact@yyamd.com" style="color:#f97316">contact@yyamd.com</a>.</p>
+
+            <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">6. Conservation</h3>
+            <p>Les données sont conservées pendant toute la durée de votre abonnement et 30 jours après la résiliation pour permettre l'export.</p>
+        </div>
+        <div style="margin-top:28px;text-align:right;">
+            <button onclick="closeModal('modal-privacy')" style="background:#f97316;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:14px;">J'ai compris</button>
+        </div>
+    </div>
+</div>
+
 @endsection
