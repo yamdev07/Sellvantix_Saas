@@ -1183,8 +1183,18 @@
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
     .hero-grid { grid-template-columns: 1fr; text-align: center; }
-    .hero-stats { justify-content: center; }
-    .hero-actions { justify-content: center; }
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
+    .hero-title    { text-align: center; width: 100%; }
+    .hero-subtitle { text-align: center; width: 100%; }
+    .hero-badge    { align-self: center; }
+    .hero-stats  { justify-content: center; width: 100%; }
+    .hero-actions { justify-content: center; width: 100%; }
     .hero-visual { display: none; }
     .features-bento { grid-template-columns: repeat(2, 1fr); }
     .bento-wide { grid-column: span 2; }
