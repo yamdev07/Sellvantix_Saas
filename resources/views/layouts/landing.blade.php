@@ -74,6 +74,10 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-body);
@@ -492,10 +496,8 @@
                     <h3>Sellvantix</h3>
                     <p>Le logiciel complet pour gérer votre stock et vos ventes. Produits, clients, fournisseurs et rapports en un seul endroit.</p>
                     <div class="social-links">
-                        <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
-                        <a href="#" class="social-link"><i class="bi bi-github"></i></a>
+                        <a href="https://wa.me/22990422588" target="_blank" rel="noopener" class="social-link"><i class="bi bi-whatsapp"></i></a>
+                        <a href="mailto:contact@yyamd.com" class="social-link"><i class="bi bi-envelope-fill"></i></a>
                     </div>
                 </div>
 
@@ -506,36 +508,32 @@
                         <li><a href="{{ route('pricing') }}">Tarifs</a></li>
                         <li><a href="{{ route('features') }}">Fonctionnalités</a></li>
                         <li><a href="{{ route('guide') }}">Guide d'utilisation</a></li>
+                        <li><a href="{{ route('faq') }}">FAQ</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
-                    <h4>Entreprise</h4>
+                    <h4>Contact</h4>
                     <ul class="footer-links">
-                        <li><a href="#">À propos</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Carrières</a></li>
-                        <li><a href="mailto:contact@yyamd.com">Contact</a></li>
+                        <li><a href="mailto:contact@yyamd.com">contact@yyamd.com</a></li>
+                        <li><a href="https://wa.me/22990422588" target="_blank" rel="noopener">WhatsApp : +229 90 42 25 88</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
                     <h4>Légal</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Conditions d'utilisation</a></li>
-                        <li><a href="#">Politique de confidentialité</a></li>
-                        <li><a href="#">Mentions légales</a></li>
-                        <li><a href="#">CGV</a></li>
+                        <li><a href="#" onclick="openLegalModal('modal-footer-terms'); return false;">Conditions d'utilisation</a></li>
+                        <li><a href="#" onclick="openLegalModal('modal-footer-privacy'); return false;">Politique de confidentialité</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
                     <h4>Support</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Centre d'aide</a></li>
-                        <li><a href="#">Documentation</a></li>
+                        <li><a href="{{ route('faq') }}">Centre d'aide</a></li>
+                        <li><a href="{{ route('guide') }}">Documentation</a></li>
                         <li><a href="mailto:contact@yyamd.com">Support technique</a></li>
-                        <li><a href="#">Status</a></li>
                     </ul>
                 </div>
             </div>
@@ -566,6 +564,133 @@
             });
         });
     </script>
+    <!-- Bouton WhatsApp flottant -->
+    <a href="https://wa.me/22990422588?text=Bonjour%2C%20je%20souhaite%20avoir%20plus%20d%27informations%20sur%20Sellvantix."
+       target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Contacter sur WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" width="28" height="28">
+            <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+        </svg>
+        <span class="whatsapp-tooltip">Contactez-nous</span>
+    </a>
+
+    <style>
+        .whatsapp-float {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 9999;
+            background: #25D366;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.45);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 28px rgba(37, 211, 102, 0.6);
+        }
+        .whatsapp-tooltip {
+            position: absolute;
+            right: 68px;
+            background: #1a1a2e;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .whatsapp-tooltip::after {
+            content: '';
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-left-color: #1a1a2e;
+        }
+        .whatsapp-float:hover .whatsapp-tooltip { opacity: 1; }
+    </style>
+
+    <!-- Modales légales footer -->
+    <div id="modal-footer-terms" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeLegalModal('modal-footer-terms')">
+        <div style="background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:40px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                <h2 style="font-size:22px;font-weight:700;color:#0f172a;margin:0">Conditions d'utilisation</h2>
+                <button onclick="closeLegalModal('modal-footer-terms')" style="background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;line-height:1">&times;</button>
+            </div>
+            <div style="font-size:14px;line-height:1.8;color:#334155;">
+                <p><strong>Dernière mise à jour :</strong> Juin 2026</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">1. Acceptation des conditions</h3>
+                <p>En accédant à Sellvantix, vous acceptez d'être lié par les présentes conditions d'utilisation.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">2. Description du service</h3>
+                <p>Sellvantix est une plateforme SaaS de gestion de stock, de ventes et de clients destinée aux commerces de détail en Afrique de l'Ouest. Nous offrons une période d'essai gratuite de 14 jours sans engagement.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">3. Compte utilisateur</h3>
+                <p>Vous êtes responsable de la confidentialité de vos identifiants et de toutes les activités réalisées sous votre compte.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">4. Abonnement et paiement</h3>
+                <p>Les abonnements sont facturés mensuellement ou annuellement selon le plan choisi. Le renouvellement est automatique sauf résiliation explicite.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">5. Données</h3>
+                <p>Vos données restent votre propriété. En cas de résiliation, elles sont exportables pendant 30 jours puis supprimées.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">6. Contact</h3>
+                <p><a href="mailto:contact@yyamd.com" style="color:#f97316">contact@yyamd.com</a> — WhatsApp : +229 90 42 25 88</p>
+            </div>
+            <div style="margin-top:28px;text-align:right;">
+                <button onclick="closeLegalModal('modal-footer-terms')" style="background:#f97316;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:14px;">J'ai compris</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-footer-privacy" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeLegalModal('modal-footer-privacy')">
+        <div style="background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:40px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                <h2 style="font-size:22px;font-weight:700;color:#0f172a;margin:0">Politique de confidentialité</h2>
+                <button onclick="closeLegalModal('modal-footer-privacy')" style="background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;line-height:1">&times;</button>
+            </div>
+            <div style="font-size:14px;line-height:1.8;color:#334155;">
+                <p><strong>Dernière mise à jour :</strong> Juin 2026</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">1. Données collectées</h3>
+                <p>Nous collectons les informations fournies lors de la création de votre compte (nom, email, entreprise) et les données d'utilisation du service.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">2. Utilisation des données</h3>
+                <p>Vos données sont utilisées uniquement pour fournir et améliorer Sellvantix. Elles ne sont jamais vendues ni partagées avec des tiers.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">3. Sécurité</h3>
+                <p>Vos données sont chiffrées en transit (HTTPS) et au repos. L'accès est strictement limité.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">4. Cookies</h3>
+                <p>Uniquement des cookies essentiels pour maintenir votre session. Aucun cookie publicitaire ou de tracking tiers.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">5. Vos droits</h3>
+                <p>Accès, modification ou suppression de vos données sur demande à <a href="mailto:contact@yyamd.com" style="color:#f97316">contact@yyamd.com</a>.</p>
+                <h3 style="font-size:16px;font-weight:600;margin:20px 0 8px;color:#0f172a">6. Conservation</h3>
+                <p>Données conservées pendant toute la durée de l'abonnement et 30 jours après résiliation.</p>
+            </div>
+            <div style="margin-top:28px;text-align:right;">
+                <button onclick="closeLegalModal('modal-footer-privacy')" style="background:#f97316;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:14px;">J'ai compris</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openLegalModal(id) {
+            document.getElementById(id).style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLegalModal(id) {
+            document.getElementById(id).style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                ['modal-footer-terms','modal-footer-privacy'].forEach(closeLegalModal);
+            }
+        });
+    </script>
+
     <script>
         (function () {
             const loader = document.getElementById('page-loader');

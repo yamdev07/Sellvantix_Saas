@@ -559,7 +559,13 @@
     margin-bottom: 24px;
     color: #fff;
 }
-.typed-wrapper { position: relative; display: inline-block; }
+.typed-wrapper {
+    position: relative;
+    display: inline-block;
+    min-width: 0;          /* will be set by JS */
+    text-align: left;
+    vertical-align: bottom;
+}
 .typed-cursor {
     display: inline-block;
     color: var(--orange-500);
@@ -830,6 +836,7 @@
     padding: 100px 0;
     background: var(--gray-50);
     position: relative;
+    overflow: hidden;
 }
 
 .features-bg-dots {
@@ -1029,7 +1036,7 @@
 /* ══════════════════════════════════════════════════════════
    TESTIMONIALS CAROUSEL
 ══════════════════════════════════════════════════════════ */
-.testimonials-section { padding: 100px 0; background: var(--gray-50); }
+.testimonials-section { padding: 100px 0; background: var(--gray-50); overflow: hidden; }
 
 .testimonials-carousel { position: relative; overflow: hidden; }
 .tc-track {
@@ -1079,7 +1086,7 @@
 /* ══════════════════════════════════════════════════════════
    FAQ ACCORDÉON
 ══════════════════════════════════════════════════════════ */
-.faq-section { padding: 100px 0; background: #fff; }
+.faq-section { padding: 100px 0; background: #fff; overflow: hidden; }
 
 .faq-accordion { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
 
@@ -1176,8 +1183,18 @@
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
     .hero-grid { grid-template-columns: 1fr; text-align: center; }
-    .hero-stats { justify-content: center; }
-    .hero-actions { justify-content: center; }
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
+    .hero-title    { text-align: center; width: 100%; }
+    .hero-subtitle { text-align: center; width: 100%; }
+    .hero-badge    { align-self: center; }
+    .hero-stats  { justify-content: center; width: 100%; }
+    .hero-actions { justify-content: center; width: 100%; }
     .hero-visual { display: none; }
     .features-bento { grid-template-columns: repeat(2, 1fr); }
     .bento-wide { grid-column: span 2; }
@@ -1244,6 +1261,17 @@ document.addEventListener('DOMContentLoaded', function () {
     let wi = 0, ci = 0, deleting = false;
     const el = document.getElementById('typed-word');
     if (el) {
+        // Fix wrapper width to the longest word before animation starts
+        // This prevents layout shifts (trembling) when words change size
+        const wrapper = el.parentElement;
+        const probe = el.cloneNode(false);
+        probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;';
+        wrapper.appendChild(probe);
+        let maxW = 0;
+        words.forEach(w => { probe.textContent = w; maxW = Math.max(maxW, probe.offsetWidth); });
+        wrapper.style.minWidth = maxW + 'px';
+        wrapper.removeChild(probe);
+
         function typeStep() {
             const word = words[wi];
             if (!deleting) {

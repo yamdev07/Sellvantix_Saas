@@ -1,5 +1,10 @@
 {
     "$schema": "https://json.schemastore.org/package.json",
+    "name": "sellvantix",
+    "version": "1.0.0",
+    "description": "Sellvantix — Retail Management SaaS for West African businesses",
+    "author": "Yoann Yamd <contact@yyamd.com>",
+    "license": "UNLICENSED",
     "private": true,
     "type": "module",
     "scripts": {
