@@ -64,7 +64,7 @@ new class extends Component
                     </x-nav-link>
 
                     <!-- Fournisseurs - Accessible uniquement aux admins et super admins -->
-                    @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin']))
+                    @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin', 'manager']))
                     <x-nav-link :href="route('suppliers.index')" :active="request()->routeIs('suppliers.*')" wire:navigate 
                         class="qapp-nav-link">
                         <div class="flex items-center gap-2">
@@ -77,7 +77,7 @@ new class extends Component
                     @endif
 
                     <!-- Catégories - Accessible uniquement aux admins et super admins -->
-                    @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin']))
+                    @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin', 'manager']))
                     <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')" wire:navigate 
                         class="qapp-nav-link">
                         <div class="flex items-center gap-2">
@@ -100,8 +100,9 @@ new class extends Component
                         </div>
                     </x-nav-link>
 
-                    <!-- Clients - Tous les utilisateurs -->
-                    <x-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')" wire:navigate 
+                    <!-- Clients - Réservé à ceux qui gèrent les ventes -->
+                    @if(auth()->user()->canManageSales())
+                    <x-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')" wire:navigate
                         class="qapp-nav-link">
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,9 +111,10 @@ new class extends Component
                             <span>Clients</span>
                         </div>
                     </x-nav-link>
+                    @endif
 
                     <!-- Historique - Accessible uniquement aux admins et super admins -->
-                    @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin']))
+                    @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin', 'manager']))
                     <x-nav-link :href="route('products.global-history')" :active="request()->routeIs('products.global-history')" wire:navigate 
                         class="qapp-nav-link">
                         <div class="flex items-center gap-2">
@@ -125,7 +127,7 @@ new class extends Component
                     @endif
 
                     <!-- Rapports - Accessible uniquement aux super_admin_global, super_admin, admin -->
-                    @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin']))
+                    @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin', 'manager']))
                     <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')" wire:navigate 
                         class="qapp-nav-link">
                         <div class="flex items-center gap-2">
@@ -267,7 +269,7 @@ new class extends Component
             </x-responsive-nav-link>
 
             <!-- Fournisseurs -->
-            @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin']))
+            @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin', 'manager']))
             <x-responsive-nav-link :href="route('suppliers.index')" :active="request()->routeIs('suppliers.*')" wire:navigate 
                 class="qapp-responsive-nav-link">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,7 +280,7 @@ new class extends Component
             @endif
 
             <!-- Catégories -->
-            @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin']))
+            @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin', 'manager']))
             <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')" wire:navigate 
                 class="qapp-responsive-nav-link">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -297,17 +299,19 @@ new class extends Component
                 Ventes
             </x-responsive-nav-link>
 
-            <!-- Clients -->
-            <x-responsive-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')" wire:navigate 
+            <!-- Clients - Réservé à ceux qui gèrent les ventes -->
+            @if(auth()->user()->canManageSales())
+            <x-responsive-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')" wire:navigate
                 class="qapp-responsive-nav-link">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5 0c-.281.015-.559.03-.835.046m-11.665 0c-.276-.016-.554-.031-.835-.046m11.665 0a23.848 23.848 0 01-11.665 0" />
                 </svg>
                 Clients
             </x-responsive-nav-link>
+            @endif
 
             <!-- Historique -->
-            @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin']))
+            @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin', 'manager']))
             <x-responsive-nav-link :href="route('products.global-history')" :active="request()->routeIs('products.global-history')" wire:navigate 
                 class="qapp-responsive-nav-link">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -318,7 +322,7 @@ new class extends Component
             @endif
 
             <!-- Rapports -->
-            @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin']))
+            @if(in_array(auth()->user()->role, ['super_admin_global', 'super_admin', 'admin', 'manager']))
             <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')" wire:navigate 
                 class="qapp-responsive-nav-link">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
