@@ -37,6 +37,6 @@ class ProductPolicy
 
     public function delete(User $user, Product $product): bool
     {
-        return $user->isSuperAdmin() && $user->tenant_id === $product->tenant_id;
+        return $user->isSuperAdminOrAdmin() && $user->tenant_id === $product->tenant_id;
     }
 }

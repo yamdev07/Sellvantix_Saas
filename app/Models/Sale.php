@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\SaleStatus;
+use App\Enums\StockMovementType;
 use App\Traits\TenantScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -101,13 +103,7 @@ class Sale extends Model
      */
     public function getStatusLabelAttribute()
     {
-        $statuses = [
-            'completed' => 'Terminée',
-            'pending' => 'En attente',
-            'cancelled' => 'Annulée',
-        ];
-        
-        return $statuses[$this->status ?? 'completed'] ?? 'Terminée';
+        return SaleStatus::tryFrom($this->status ?? SaleStatus::Completed->value)?->label() ?? 'Terminée';
     }
 
     /**
@@ -262,7 +258,7 @@ class Sale extends Model
      */
     public function scopeCompleted($query)
     {
-        return $query->where('status', 'completed');
+        return $query->where('status', SaleStatus::Completed->value);
     }
 
     // ============ MÉTHODES ============
@@ -358,7 +354,7 @@ class Sale extends Model
                     // Enregistrer le mouvement de stock
                     StockMovement::create([
                         'product_id' => $product->id,
-                        'type' => 'entree',
+                        'type' => StockMovementType::Entry->value,
                         'quantity' => $item->quantity,
                         'purchase_price' => $product->purchase_price,
                         'sale_price' => $product->sale_price,
@@ -373,7 +369,7 @@ class Sale extends Model
             }
 
             // Marquer la vente comme annulée
-            $this->update(['status' => 'cancelled']);
+            $this->update(['status' => SaleStatus::Cancelled->value]);
             
             DB::commit();
         } catch (\Exception $e) {
@@ -419,7 +415,7 @@ class Sale extends Model
     public function isEditable()
     {
         // On ne peut modifier que les ventes du jour et non annulées
-        return $this->created_at->isToday() && $this->status !== 'cancelled';
+        return $this->created_at->isToday() && $this->status !== SaleStatus::Cancelled->value;
     }
 
     /**
@@ -429,7 +425,7 @@ class Sale extends Model
     {
         $newSale = $this->replicate();
         $newSale->created_at = now();
-        $newSale->status = 'pending';
+        $newSale->status = SaleStatus::Pending->value;
         $newSale->invoice_number = null;
         $newSale->save();
         
@@ -488,7 +484,7 @@ class Sale extends Model
                 DB::raw('SUM(sale_items.quantity) as total_quantity'),
                 DB::raw('SUM(sale_items.total) as total_revenue')
             )
-            ->where('sales.status', 'completed')
+            ->where('sales.status', SaleStatus::Completed->value)
             ->groupBy('products.id', 'products.name')
             ->orderBy('total_quantity', 'desc')
             ->limit($limit);

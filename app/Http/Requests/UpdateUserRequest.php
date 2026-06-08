@@ -4,8 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
-class StoreUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,10 +16,15 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => 'required|string|max:255',
-            'email'                 => 'required|email|max:255|unique:users,email',
-            'password'              => 'required|string|min:6|confirmed',
-            'role'                  => 'required|in:admin,manager,cashier,storekeeper',
+            'name'     => 'required|string|max:255',
+            'email'    => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($this->route('user')),
+            ],
+            'role'     => 'required|in:admin,manager,cashier,storekeeper',
+            'password' => 'nullable|string|min:6|confirmed',
         ];
     }
 
@@ -28,7 +34,6 @@ class StoreUserRequest extends FormRequest
             'name.required'     => 'Le nom est obligatoire.',
             'email.required'    => "L'adresse e-mail est obligatoire.",
             'email.unique'      => 'Cette adresse e-mail est déjà utilisée.',
-            'password.required' => 'Le mot de passe est obligatoire.',
             'role.required'     => 'Le rôle est obligatoire.',
         ];
     }

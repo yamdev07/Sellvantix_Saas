@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\SubscriptionStatus;
+use App\Enums\UserRole;
+use App\Traits\HasSubscription;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
-use App\Traits\HasSubscription;
 
 class User extends Authenticatable
 {
@@ -412,15 +414,7 @@ class User extends Authenticatable
      */
     public function getRoleLabelAttribute(): string
     {
-        return match($this->role) {
-            'super_admin_global' => 'Super Admin Global',
-            'super_admin' => 'Super Admin',
-            'admin' => 'Administrateur',
-            'manager' => 'Gérant',
-            'cashier' => 'Caissier',
-            'storekeeper' => 'Magasinier',
-            default => 'Employé'
-        };
+        return UserRole::tryFrom($this->role)?->label() ?? 'Employé';
     }
 
     /**
@@ -428,15 +422,7 @@ class User extends Authenticatable
      */
     public function getRoleColorAttribute(): string
     {
-        return match($this->role) {
-            'super_admin_global' => 'purple',
-            'super_admin' => 'violet',
-            'admin' => 'red',
-            'manager' => 'blue',
-            'cashier' => 'green',
-            'storekeeper' => 'orange',
-            default => 'gray'
-        };
+        return UserRole::tryFrom($this->role)?->color() ?? 'gray';
     }
 
     /**
@@ -658,13 +644,7 @@ class User extends Authenticatable
      */
     public function getSubscriptionStatusLabelAttribute(): string
     {
-        return match($this->subscription_status) {
-            'trial' => 'Période d\'essai',
-            'active' => 'Abonnement actif',
-            'expired' => 'Abonnement expiré',
-            'cancelled' => 'Résilié',
-            default => 'Inconnu'
-        };
+        return SubscriptionStatus::tryFrom($this->subscription_status)?->label() ?? 'Inconnu';
     }
 
     /**
@@ -672,13 +652,7 @@ class User extends Authenticatable
      */
     public function getSubscriptionStatusColorAttribute(): string
     {
-        return match($this->subscription_status) {
-            'trial' => 'yellow',
-            'active' => 'green',
-            'expired' => 'red',
-            'cancelled' => 'gray',
-            default => 'gray'
-        };
+        return SubscriptionStatus::tryFrom($this->subscription_status)?->color() ?? 'gray';
     }
 
     /**
