@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\StockMovementType;
+use App\Exceptions\InsufficientStockException;
 use App\Traits\TenantScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -74,7 +76,7 @@ class StockMovement extends Model
      */
     public function getTypeLabelAttribute(): string
     {
-        return $this->type === 'entree' ? 'Entrée' : 'Sortie';
+        return StockMovementType::tryFrom($this->type)?->label() ?? $this->type;
     }
 
     /**
@@ -82,7 +84,7 @@ class StockMovement extends Model
      */
     public function getTypeClassAttribute(): string
     {
-        return $this->type === 'entree' ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100';
+        return StockMovementType::tryFrom($this->type)?->cssClass() ?? '';
     }
 
     /**
@@ -90,7 +92,7 @@ class StockMovement extends Model
      */
     public function getTypeIconAttribute(): string
     {
-        return $this->type === 'entree' ? 'bi-arrow-down-circle' : 'bi-arrow-up-circle';
+        return StockMovementType::tryFrom($this->type)?->icon() ?? '';
     }
 
     /**
@@ -98,8 +100,8 @@ class StockMovement extends Model
      */
     public function getFormattedQuantityAttribute(): string
     {
-        $sign = $this->type === 'entree' ? '+' : '-';
-        return $sign . ' ' . $this->quantity;
+        $movementType = StockMovementType::tryFrom($this->type);
+        return $movementType?->signedQuantity($this->quantity) ?? (string) $this->quantity;
     }
 
     /**
@@ -158,7 +160,7 @@ class StockMovement extends Model
      */
     public function getIsEntryAttribute(): bool
     {
-        return $this->type === 'entree';
+        return $this->type === StockMovementType::Entry->value;
     }
 
     /**
@@ -166,7 +168,7 @@ class StockMovement extends Model
      */
     public function getIsExitAttribute(): bool
     {
-        return $this->type === 'sortie';
+        return $this->type === StockMovementType::Exit->value;
     }
 
     // ============ SCOPES ============
@@ -195,7 +197,7 @@ class StockMovement extends Model
      */
     public function scopeEntries($query)
     {
-        return $query->where('type', 'entree');
+        return $query->where('type', StockMovementType::Entry->value);
     }
 
     /**
@@ -203,7 +205,7 @@ class StockMovement extends Model
      */
     public function scopeExits($query)
     {
-        return $query->where('type', 'sortie');
+        return $query->where('type', StockMovementType::Exit->value);
     }
 
     /**
@@ -286,7 +288,7 @@ class StockMovement extends Model
             
             $movement = self::create([
                 'product_id' => $product->id,
-                'type' => 'entree',
+                'type' => StockMovementType::Entry->value,
                 'quantity' => $quantity,
                 'purchase_price' => $purchasePrice ?? $product->purchase_price,
                 'sale_price' => $salePrice ?? $product->sale_price,
@@ -316,7 +318,7 @@ class StockMovement extends Model
     public static function createExit(Product $product, $quantity, $motif, $reference = null)
     {
         if ($product->stock < $quantity) {
-            throw new \Exception("Stock insuffisant. Disponible: {$product->stock}, Demandé: {$quantity}");
+            throw new InsufficientStockException($product->name, $product->stock, $quantity);
         }
 
         DB::beginTransaction();
@@ -327,7 +329,7 @@ class StockMovement extends Model
             
             $movement = self::create([
                 'product_id' => $product->id,
-                'type' => 'sortie',
+                'type' => StockMovementType::Exit->value,
                 'quantity' => $quantity,
                 'purchase_price' => $product->purchase_price,
                 'sale_price' => $product->sale_price,
@@ -366,21 +368,20 @@ class StockMovement extends Model
         
         try {
             // Mouvement inverse
-            if ($this->type === 'entree') {
-                // Si c'était une entrée, on doit sortir la quantité
+            if ($this->type === StockMovementType::Entry->value) {
                 if ($product->stock < $this->quantity) {
-                    throw new \Exception("Impossible d'annuler : stock insuffisant");
+                    throw new InsufficientStockException($product->name, $product->stock, $this->quantity);
                 }
                 $product->decrement('stock', $this->quantity);
             } else {
-                // Si c'était une sortie, on doit rentrer la quantité
                 $product->increment('stock', $this->quantity);
             }
 
             // Créer un mouvement d'annulation
+            $movementType = StockMovementType::tryFrom($this->type);
             $cancelMovement = self::create([
                 'product_id' => $this->product_id,
-                'type' => $this->type === 'entree' ? 'sortie' : 'entree',
+                'type' => $movementType?->opposite()->value ?? StockMovementType::Entry->value,
                 'quantity' => $this->quantity,
                 'purchase_price' => $this->purchase_price,
                 'sale_price' => $this->sale_price,
@@ -445,11 +446,10 @@ class StockMovement extends Model
      */
     public function getValueAttribute(): float
     {
-        if ($this->type === 'entree') {
+        if ($this->type === StockMovementType::Entry->value) {
             return $this->quantity * ($this->purchase_price ?? 0);
-        } else {
-            return $this->quantity * ($this->sale_price ?? 0);
         }
+        return $this->quantity * ($this->sale_price ?? 0);
     }
 
     /**
@@ -465,7 +465,7 @@ class StockMovement extends Model
      */
     public function getRelevantPriceAttribute(): ?float
     {
-        return $this->type === 'entree' ? $this->purchase_price : $this->sale_price;
+        return $this->type === StockMovementType::Entry->value ? $this->purchase_price : $this->sale_price;
     }
 
     /**
@@ -511,8 +511,8 @@ class StockMovement extends Model
     {
         $query = self::select(
                 'product_id',
-                DB::raw("SUM(CASE WHEN type = 'entree' THEN quantity ELSE 0 END) as total_entries"),
-                DB::raw("SUM(CASE WHEN type = 'sortie' THEN quantity ELSE 0 END) as total_exits"),
+                DB::raw("SUM(CASE WHEN type = '" . StockMovementType::Entry->value . "' THEN quantity ELSE 0 END) as total_entries"),
+                DB::raw("SUM(CASE WHEN type = '" . StockMovementType::Exit->value . "' THEN quantity ELSE 0 END) as total_exits"),
                 DB::raw("COUNT(*) as total_movements")
             )
             ->with('product')
@@ -537,8 +537,8 @@ class StockMovement extends Model
     {
         $query = self::select(
                 DB::raw('DATE(created_at) as date'),
-                DB::raw("SUM(CASE WHEN type = 'entree' THEN quantity ELSE 0 END) as total_entries"),
-                DB::raw("SUM(CASE WHEN type = 'sortie' THEN quantity ELSE 0 END) as total_exits"),
+                DB::raw("SUM(CASE WHEN type = '" . StockMovementType::Entry->value . "' THEN quantity ELSE 0 END) as total_entries"),
+                DB::raw("SUM(CASE WHEN type = '" . StockMovementType::Exit->value . "' THEN quantity ELSE 0 END) as total_exits"),
                 DB::raw('COUNT(*) as total_movements')
             )
             ->where('created_at', '>=', now()->subDays($days))

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sale;
-use App\Models\SaleItem;
 use App\Models\Product;
 use App\Models\Client;
 use App\Models\User;
@@ -11,24 +10,12 @@ use App\Services\SaleService;
 use App\Http\Requests\StoreSaleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class SaleController extends Controller
 {
     public function __construct(private SaleService $saleService)
     {
         $this->middleware('auth');
-    }
-
-    private function getTenantId(): int
-    {
-        return Auth::user()->tenant_id;
-    }
-
-    private function authorizeViewSales(): void
-    {
-        // Tous les utilisateurs authentifiés peuvent voir les ventes
     }
 
     // ----------------------
@@ -113,21 +100,12 @@ class SaleController extends Controller
     // ----------------------
     public function destroy(Sale $sale)
     {
-        $user = Auth::user();
-
-        $allowedRoles = ['super_admin_global', 'super_admin', 'admin', 'manager', 'storekeeper'];
-        if (!in_array($user->role, $allowedRoles)) {
-            abort(403, 'Vous n\'avez pas l\'autorisation d\'annuler des ventes.');
-        }
-
-        if ($sale->tenant_id !== $user->tenant_id && !$user->isSuperAdminGlobal()) {
-            abort(403);
-        }
+        $this->authorize('cancel', $sale);
 
         $sale->loadMissing('items');
 
         try {
-            $this->saleService->cancel($sale, $user->id);
+            $this->saleService->cancel($sale, Auth::id());
             return redirect()->route('sales.index')->with('success', 'Vente annulée et stock restauré.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -139,18 +117,14 @@ class SaleController extends Controller
     // ----------------------
     public function cancel($id)
     {
-        $user     = Auth::user();
-        $tenantId = $user->tenant_id;
-
-        $allowedRoles = ['super_admin_global', 'super_admin', 'admin', 'manager', 'storekeeper'];
-        if (!in_array($user->role, $allowedRoles)) {
-            abort(403, 'Vous n\'avez pas l\'autorisation d\'annuler des ventes.');
-        }
+        $tenantId = Auth::user()->tenant_id;
 
         $sale = Sale::with('items')->where('tenant_id', $tenantId)->findOrFail($id);
 
+        $this->authorize('cancel', $sale);
+
         try {
-            $this->saleService->cancel($sale, $user->id);
+            $this->saleService->cancel($sale, Auth::id());
             return redirect()->route('sales.index')->with('success', 'Vente annulée et stock restauré.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -193,22 +167,9 @@ class SaleController extends Controller
     // ----------------------
     public function getStats()
     {
-        $this->authorizeViewSales();
-        
-        $tenantId = $this->getTenantId();
-        
-        $stats = [
-            'total_sales' => Sale::where('tenant_id', $tenantId)->count(),
-            'total_revenue' => Sale::where('tenant_id', $tenantId)->sum('total_price'),
-            'total_quantity_sold' => SaleItem::whereHas('sale', function($q) use ($tenantId) {
-                $q->where('tenant_id', $tenantId);
-            })->sum('quantity'),
-            'average_sale' => Sale::where('tenant_id', $tenantId)->avg('total_price'),
-            'unique_clients' => Sale::where('tenant_id', $tenantId)->distinct('client_id')->count('client_id'),
-            'active_cashiers' => Sale::where('tenant_id', $tenantId)->distinct('user_id')->count('user_id'),
-        ];
-        
-        return response()->json($stats);
+        $tenantId = Auth::user()->tenant_id;
+
+        return response()->json($this->saleService->getStats($tenantId));
     }
 
     // ----------------------
@@ -218,85 +179,25 @@ class SaleController extends Controller
     {
         $userRole = Auth::user()->role;
         $reportRoles = ['super_admin_global', 'super_admin', 'admin', 'manager'];
-        
+
         if (!in_array($userRole, $reportRoles)) {
             abort(403, 'Vous n\'avez pas les droits pour voir les rapports.');
         }
-        
-        $tenantId = $this->getTenantId();
-        
+
         $request->validate([
             'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'end_date'   => 'nullable|date|after_or_equal:start_date',
         ]);
-        
-        $query = Sale::with(['client', 'user', 'items.product'])
-                     ->where('tenant_id', $tenantId);
-        
-        if ($request->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $request->start_date);
-        }
-        
-        if ($request->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $request->end_date);
-        }
-        
-        if ($request->filled('client_id')) {
-            $query->where('client_id', $request->client_id);
-        }
-        
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
-        }
-        
-        // Pagination pour l'affichage
-        $sales = $query->latest()->paginate(15);
-        
-        // Toutes les ventes pour les statistiques
-        $allSales = Sale::where('tenant_id', $tenantId)->get();
-        
-        $totalRevenue = $allSales->sum('total_price');
-        $totalItems = $allSales->flatMap->items->sum('quantity');
-        $averageSale = $allSales->avg('total_price') ?? 0;
-        
-        // Ventes par jour
-        $salesByDay = $allSales->groupBy(function($sale) {
-            return $sale->created_at->format('Y-m-d');
-        })->map(function($daySales) {
-            return [
-                'count' => $daySales->count(),
-                'total' => $daySales->sum('total_price'),
-            ];
-        });
-        
-        // Produits les plus vendus
-        $topProducts = DB::table('sale_items')
-            ->join('products', 'sale_items.product_id', '=', 'products.id')
-            ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-            ->where('sales.tenant_id', $tenantId)
-            ->select('products.name', DB::raw('SUM(sale_items.quantity) as total_quantity'), DB::raw('SUM(sale_items.total_price) as total_revenue'))
-            ->groupBy('products.id', 'products.name')
-            ->orderBy('total_quantity', 'desc')
-            ->limit(10)
-            ->get();
-        
-        $reportData = [
-            'total_sales' => $allSales->count(),
-            'total_revenue' => $totalRevenue,
-            'formatted_total_revenue' => number_format($totalRevenue, 0, ',', ' ') . ' FCFA',
-            'total_items' => $totalItems,
-            'average_sale' => $averageSale,
-            'formatted_average_sale' => number_format($averageSale, 0, ',', ' ') . ' FCFA',
-            'sales_by_day' => $salesByDay,
-            'top_products' => $topProducts,
-        ];
-        
-        // Pour les filtres
-        $clients = Client::where('tenant_id', $tenantId)->get();
-        $users = User::where('tenant_id', $tenantId)
-                     ->where('role', '!=', 'super_admin_global')
-                     ->get();
-        
-        return view('reports.sales', compact('sales', 'reportData', 'clients', 'users'));
+
+        $tenantId = Auth::user()->tenant_id;
+
+        $data = $this->saleService->reportData($request, $tenantId);
+
+        return view('reports.sales', [
+            'sales'      => $data['sales'],
+            'reportData' => $data['reportData'],
+            'clients'    => $data['clients'],
+            'users'      => $data['users'],
+        ]);
     }
 }
